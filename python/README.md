@@ -19,3 +19,10 @@ flask run
 ```
 pytest
 ```
+
+## Current Functionality
+- User can enter address to search for local elections
+- System will parse the request to obtain the city and state
+- System will query the TurboVote API to receive local election information
+- System will present local election info to user if it exists
+- System will inform user of no local elections if empty object returned

@@ -1,4 +1,5 @@
-""" This file contains the function for querying data from the Turbovote API """
+""" This file contains the function for querying data from the Turbovote API
+and storing in a dictionary """
 
 # Library Imports
 import requests

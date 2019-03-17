@@ -1,5 +1,6 @@
 """ This file contains the unit tests for querying data, collecting data
-in a local repository, and ensuring that the length of the postal codes list == 61 and the states with current DemocracyWorks employees are in
+in a local repository, and ensuring that the length of the postal codes
+list == 61 and the states with current DemocracyWorks employees are in
 the list """
 
 # Library Imports
