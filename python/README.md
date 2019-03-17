@@ -20,6 +20,13 @@ flask run
 pytest
 ```
 
+## External Libraries
+- Requests
+- JSON
+- Unittest
+- Functools
+- Flask
+
 ## Current Functionality
 - User can enter address to search for local elections
 - System will parse the request to obtain the city and state
