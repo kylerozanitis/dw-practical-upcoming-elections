@@ -6,17 +6,53 @@ import requests
 import json
 
 
-def query_data(city_name, state_abbreviation):
+def generate_ocdids(request_form):
+    """ Provided the request form, generate ocd-id """
+    city_name = str(request_form['city']).lower().replace(' ', '_')
+    state_abbreviation = str(request_form['state']).lower()
+
+    city_ocdid = 'ocd-division/country:us/state:{0}/place:{1}'.format(
+        state_abbreviation, city_name)
+    state_ocdid = 'ocd-division/country:us/state:{}'.format(state_abbreviation)
+
+    return ','.join([city_ocdid, state_ocdid])
+
+
+def query_google_civic(request_form):
+    """ Provided the request form, gather civic information in area """
+    api_key = ''
+
+    street_address = str(request_form['street'])
+    city_name = str(request_form['city'])
+    state_abbreviation = str(request_form['state'])
+    zip_code = str(request_form['zip'])
+
+    query = ' '.join([street_address, city_name, state_abbreviation, zip_code])
+
+    url = 'https://www.googleapis.com/civicinfo/v2/representatives'
+    payload = {'address': query, 'key': api_key}
+
+    response = requests.get(url, params=payload)
+    json_response = response.json()
+    ocdids = json_response['divisions'].keys()
+    return ocdids
+
+
+def query_turbovote(ocdids):
     """ Query the Turbovote API for local elections; return json if election data
     available else empty list """
 
-    query = 'https://api.turbovote.org/elections/upcoming?district-divisions=ocd-division/country:us/state:{0},ocd-division/country:us/state:{0}/place:{1}'.format(
-        state_abbreviation, city_name)
+    joined_ocdids = ','.join(ocdids)
+
+    query = 'https://api.turbovote.org/elections/upcoming'
+    payload = {'district-divisions': joined_ocdids}
     headers = {'Accept': 'application/json'}
 
-    response = requests.get(query, headers=headers)
+    response = requests.get(query, params=payload, headers=headers)
 
-    if response != []:
+    # print(payload)
+    # print(response.text)
+    if response.json() != {}:
         json_response = response.json()
         return json_response
     else:

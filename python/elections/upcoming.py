@@ -8,7 +8,7 @@ import json
 
 # Local Imports
 from elections.us_states import postal_abbreviations
-from elections.query import query_data, temp_store_data
+from elections.query import query_google_civic, query_turbovote, temp_store_data, generate_ocdids
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
@@ -27,14 +27,15 @@ def search():
 @bp.route('/search', methods=('POST',))
 def fetch_elections():
     if request.method == 'POST':
-        city_name = str(request.form['city']).lower().replace(' ', '_')
-        state_abbreviation = str(request.form['state']).lower()
+        city_name = str(request.form['city'])
+        state_abbreviation = str(request.form['state'])
 
-        json_response = query_data(city_name, state_abbreviation)
+        ocdids = query_google_civic(request.form)
+        json_response = query_turbovote(ocdids)
 
         if json_response != []:
             election_data = temp_store_data(json_response)
         else:
             election_data = {}
-        
+
         return render_template('upcoming_elections.html', city=city_name, state=state_abbreviation, results=election_data)
